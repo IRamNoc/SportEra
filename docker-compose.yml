@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+  mongodb:
+    image: mongo:6
+    container_name: sportera-mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: Kungfu22
+      MONGO_INITDB_DATABASE: sportera
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build:
+      context: ./backend
+    container_name: sportera-backend
+    env_file: ./backend/.env
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/usr/src/app:cached
+      - /usr/src/app/node_modules
+    command: yarn dev
+    depends_on:
+      - mongodb
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: sportera-frontend
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./frontend:/app:cached
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: yarn dev
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:

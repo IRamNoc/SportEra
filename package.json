@@ -1,0 +1,11 @@
+{
+    "name": "sportera-monorepo",
+    "private": true,
+    "scripts": {
+        "dev:all": "docker compose up --build",
+        "stop:all": "docker compose down"
+    },
+    "dependencies": {
+        "js-yaml": "^4.1.0"
+    }
+}

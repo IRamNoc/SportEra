@@ -1,0 +1,104 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6
+    container_name: sportera-mongo-prod
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+    volumes:
+      - mongo_data_prod:/data/db
+    networks:
+      - sportera-prod
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: sportera-backend-prod
+    env_file: ./backend/.env.prod
+    restart: always
+    depends_on:
+      - mongodb
+    networks:
+      - sportera-prod
+    environment:
+      - NODE_ENV=production
+    command: yarn start
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    container_name: sportera-frontend-prod
+    env_file: ./frontend/.env.prod
+    restart: always
+    environment:
+      - NODE_ENV=production
+    command: yarn start
+    depends_on:
+      - backend
+    networks:
+      - sportera-prod
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  nginx:
+    image: nginx:alpine
+    container_name: sportera-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infra/nginx/conf.d:/etc/nginx/conf.d
+      - ./infra/nginx/ssl:/etc/nginx/ssl
+      - ./infra/nginx/logs:/var/log/nginx
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - sportera-prod
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 128M
+
+volumes:
+  mongo_data_prod:
+
+networks:
+  sportera-prod:
+    driver: bridge

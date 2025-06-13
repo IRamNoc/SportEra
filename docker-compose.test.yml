@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6
+    container_name: sportera-mongo-test
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: TestPassword123
+      MONGO_INITDB_DATABASE: sportera_test
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo_data_test:/data/db
+    networks:
+      - sportera-test
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.test
+    container_name: sportera-backend-test
+    env_file: ./backend/.env.test
+    ports:
+      - "3002:3000"
+    depends_on:
+      - mongodb
+    networks:
+      - sportera-test
+    environment:
+      - NODE_ENV=test
+    command: yarn start
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.test
+    container_name: sportera-frontend-test
+    env_file: ./frontend/.env.test
+    ports:
+      - "3003:3000"
+    environment:
+      - NODE_ENV=test
+    command: yarn start
+    depends_on:
+      - backend
+    networks:
+      - sportera-test
+
+volumes:
+  mongo_data_test:
+
+networks:
+  sportera-test:
+    driver: bridge
