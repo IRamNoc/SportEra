@@ -3,13 +3,13 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copier les fichiers de dépendances
-COPY package.json yarn.lock ./
+COPY package.json package-lock.json ./
 
 # Définir l'environnement de développement
 ENV NODE_ENV=development
 
 # Installer les dépendances
-RUN yarn install --frozen-lockfile
+RUN npm ci
 
 # Copier le code source
 COPY . .
@@ -21,4 +21,4 @@ ENV PATH="/app/node_modules/.bin:$PATH"
 EXPOSE 3000
 
 # Commande par défaut pour le développement
-CMD ["yarn", "dev"]
+CMD ["npm", "run", "dev"]

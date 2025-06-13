@@ -67,6 +67,36 @@ dev:
 	@echo "Frontend: http://localhost:3001"
 	@echo "Backend: http://localhost:3000"
 
+# Development commands
+dev-detached:
+	docker-compose -f docker-compose.dev.yml up --build -d
+
+dev-stop:
+	docker-compose -f docker-compose.dev.yml down
+
+# Cleaning commands
+clean-full:
+	@echo "🧹 Nettoyage complet automatique..."
+	./scripts/clean-restart.sh 1
+
+clean-docker:
+	@echo "🐳 Nettoyage Docker uniquement..."
+	./scripts/clean-restart.sh 2
+
+clean-node:
+	@echo "📦 Nettoyage Node.js uniquement..."
+	./scripts/clean-restart.sh 3
+
+emergency-clean:
+	@echo "🚨 NETTOYAGE D'URGENCE - SUPPRESSION DE TOUT!"
+	@echo "⚠️  Appuyez sur Ctrl+C dans les 5 secondes pour annuler..."
+	@sleep 5
+	./scripts/emergency-clean.sh
+
+restart:
+	@echo "🔄 Redémarrage simple..."
+	./scripts/clean-restart.sh 5
+
 # Test environment
 test:
 	@echo "🧪 Starting test environment..."
@@ -100,14 +130,8 @@ stop:
 
 # Clean everything
 clean:
-	@echo "🧹 Cleaning all containers, images, and volumes..."
-	@read -p "This will remove ALL Docker containers, images, and volumes. Continue? [y/N] " confirm && [ "$$confirm" = "y" ]
-	docker-compose down --rmi all --volumes --remove-orphans || true
-	docker-compose -f docker-compose.dev.yml down --rmi all --volumes --remove-orphans || true
-	docker-compose -f docker-compose.test.yml down --rmi all --volumes --remove-orphans || true
-	docker-compose -f docker-compose.prod.yml down --rmi all --volumes --remove-orphans || true
-	docker system prune -af --volumes
-	@echo "✅ Cleanup completed"
+	@echo "🧹 Lancement du script de nettoyage interactif..."
+	./scripts/clean-restart.sh
 
 # Show logs
 logs:

@@ -3,10 +3,10 @@ FROM node:18-alpine
 WORKDIR /usr/src/app
 
 # Copier les fichiers de dépendances
-COPY package.json yarn.lock ./
+COPY package.json package-lock.json ./
 
 # Installer les dépendances
-RUN yarn install --frozen-lockfile
+RUN npm ci
 
 # Copier le code source
 COPY . .

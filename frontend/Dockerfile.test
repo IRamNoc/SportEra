@@ -4,8 +4,8 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Install dependencies
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+COPY package.json package-lock.json ./
+RUN npm ci
 
 # Copy source code
 COPY . .
@@ -17,10 +17,10 @@ ENV PATH /app/node_modules/.bin:$PATH
 ENV NODE_ENV=test
 
 # Build the application
-RUN yarn build
+RUN npm run build
 
 # Expose port
 EXPOSE 3000
 
 # Test environment command
-CMD ["yarn", "start"]
+CMD ["npm", "start"]

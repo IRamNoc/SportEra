@@ -4,8 +4,8 @@ FROM node:18-alpine
 WORKDIR /usr/src/app
 
 # Install dependencies
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+COPY package.json package-lock.json ./
+RUN npm ci
 
 # Copy source code
 COPY . .
@@ -17,4 +17,4 @@ ENV PATH /usr/src/app/node_modules/.bin:$PATH
 EXPOSE 3000
 
 # Development command with hot reload
-CMD ["yarn", "dev"]
+CMD ["npm", "run", "dev"]

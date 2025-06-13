@@ -1,235 +1,159 @@
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-import Image from 'next/image';
-import { Activity, MapPin, QrCode, Trophy, User, LogOut, Star, Calendar, Target, Zap } from 'lucide-react';
-import Navbar from '../components/Navbar';
+'use client';
 
-interface UserData {
-  id: string;
-  name: string;
-  email: string;
-  points?: number;
-}
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { Trophy, User as UserIcon, Mail, Calendar, Award } from 'lucide-react';
+import Layout from '../components/layout/Layout';
+import Card from '../components/ui/Card';
+import Button from '../components/ui/Button';
+import { useAuthContext } from '../contexts/AuthContext';
 
 export default function Dashboard() {
-  const [user, setUser] = useState<UserData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { user, isAuthenticated, isLoading, logout } = useAuthContext();
   const router = useRouter();
 
   useEffect(() => {
-    // Check if user is authenticated
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-
-    if (!token || !userData) {
+    if (!isLoading && !isAuthenticated) {
       router.push('/login');
-      return;
     }
-
-    try {
-      const parsedUser = JSON.parse(userData);
-      setUser(parsedUser);
-    } catch (error) {
-      console.error('Error parsing user data:', error);
-      router.push('/login');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [router]);
+  }, [isAuthenticated, isLoading, router]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    logout();
     router.push('/');
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center">
-        <div className="text-center">
-          <Activity className="h-12 w-12 text-blue-600 animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Chargement...</p>
+      <Layout>
+        <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Chargement...</p>
+          </div>
         </div>
-      </div>
+      </Layout>
     );
   }
 
-  if (!user) {
+  if (!isAuthenticated || !user) {
     return null;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <Navbar />
-
-      {/* Main Content */}
-      <main className="pt-16 max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          {/* Header */}
-          <div className="mb-8 text-center">
-            <div className="flex justify-center mb-4">
-              <Image 
-                src="/logo-blue.svg" 
-                alt="Sport'Era Logo" 
-                width={60} 
-                height={60}
-                className="animate-float"
-              />
-            </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">Bienvenue, {user?.name} !</h1>
-            <p className="text-xl text-gray-600">Votre espace Sport'Era vous attend</p>
-          </div>
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white overflow-hidden shadow-xl rounded-2xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:scale-105">
-              <div className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
-                      Points fidélité
-                    </p>
-                    <p className="text-3xl font-bold text-gray-900 mt-2">
-                      {user?.points || 0}
-                    </p>
-                  </div>
-                  <div className="p-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl">
-                    <Trophy className="h-8 w-8 text-white" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white overflow-hidden shadow-xl rounded-2xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:scale-105">
-              <div className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
-                      Sessions
-                    </p>
-                    <p className="text-3xl font-bold text-gray-900 mt-2">
-                      {user?.sessionsCount || 0}
-                    </p>
-                  </div>
-                  <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">
-                    <QrCode className="h-8 w-8 text-white" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white overflow-hidden shadow-xl rounded-2xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:scale-105">
-              <div className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
-                      Lieux visités
-                    </p>
-                    <p className="text-3xl font-bold text-gray-900 mt-2">
-                      {user?.placesVisited || 0}
-                    </p>
-                  </div>
-                  <div className="p-3 bg-gradient-to-br from-green-500 to-teal-600 rounded-xl">
-                    <MapPin className="h-8 w-8 text-white" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white overflow-hidden shadow-xl rounded-2xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:scale-105">
-              <div className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
-                      Niveau
-                    </p>
-                    <p className="text-3xl font-bold text-gray-900 mt-2">
-                      {Math.floor((user?.points || 0) / 100) + 1}
-                    </p>
-                  </div>
-                  <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl">
-                    <Star className="h-8 w-8 text-white" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="bg-white overflow-hidden shadow-xl rounded-2xl border border-gray-100">
-              <div className="p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                  <Zap className="h-6 w-6 text-blue-500 mr-2" />
-                  Actions rapides
-                </h3>
-                <div className="space-y-4">
-                  <Link
-                    href="/map"
-                    className="flex items-center p-4 border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all duration-300 group"
-                  >
-                    <div className="p-3 bg-blue-100 rounded-xl group-hover:bg-blue-200 transition-colors">
-                      <MapPin className="h-6 w-6 text-blue-600" />
-                    </div>
-                    <div className="ml-4">
-                      <p className="font-semibold text-gray-900">Explorer la carte</p>
-                      <p className="text-sm text-gray-500">Découvrez les infrastructures près de vous</p>
-                    </div>
-                  </Link>
-                  <Link
-                    href="/scan"
-                    className="flex items-center p-4 border-2 border-gray-200 rounded-xl hover:border-green-500 hover:bg-green-50 transition-all duration-300 group"
-                  >
-                    <div className="p-3 bg-green-100 rounded-xl group-hover:bg-green-200 transition-colors">
-                      <QrCode className="h-6 w-6 text-green-600" />
-                    </div>
-                    <div className="ml-4">
-                      <p className="font-semibold text-gray-900">Scanner un QR code</p>
-                      <p className="text-sm text-gray-500">Gagnez des points en validant votre session</p>
-                    </div>
-                  </Link>
-                  <Link
-                    href="/profile"
-                    className="flex items-center p-4 border-2 border-gray-200 rounded-xl hover:border-purple-500 hover:bg-purple-50 transition-all duration-300 group"
-                  >
-                    <div className="p-3 bg-purple-100 rounded-xl group-hover:bg-purple-200 transition-colors">
-                      <User className="h-6 w-6 text-purple-600" />
-                    </div>
-                    <div className="ml-4">
-                      <p className="font-semibold text-gray-900">Mon profil</p>
-                      <p className="text-sm text-gray-500">Gérez vos informations personnelles</p>
-                    </div>
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white overflow-hidden shadow-xl rounded-2xl border border-gray-100">
-              <div className="p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                  <Calendar className="h-6 w-6 text-purple-500 mr-2" />
-                  Activité récente
-                </h3>
-                <div className="text-center py-12">
-                  <div className="p-4 bg-gray-100 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-                    <Activity className="h-10 w-10 text-gray-400" />
-                  </div>
-                  <h4 className="text-lg font-semibold text-gray-900 mb-2">Aucune activité récente</h4>
-                  <p className="text-gray-500 mb-4">Commencez votre aventure Sport'Era dès maintenant !</p>
-                  <Link
-                    href="/scan"
-                    className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
-                  >
-                    <QrCode className="h-4 w-4 mr-2" />
-                    Scanner mon premier QR code
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-
+    <Layout>
+      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        {/* En-tête de bienvenue */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Bienvenue, {user.name}! 👋
+          </h1>
+          <p className="text-gray-600">
+            Voici un aperçu de votre compte SportEra
+          </p>
         </div>
-      </main>
-    </div>
+
+        {/* Grille de cartes */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {/* Carte Points */}
+          <Card className="text-center">
+            <Card.Body>
+              <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mx-auto mb-4">
+                <Trophy className="h-6 w-6 text-blue-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Points</h3>
+              <p className="text-3xl font-bold text-blue-600">{user.points}</p>
+              <p className="text-sm text-gray-500 mt-1">Points accumulés</p>
+            </Card.Body>
+          </Card>
+
+          {/* Carte Profil */}
+          <Card>
+            <Card.Header>
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                <UserIcon className="h-5 w-5 mr-2" />
+                Informations du profil
+              </h3>
+            </Card.Header>
+            <Card.Body className="space-y-3">
+              <div className="flex items-center">
+                <UserIcon className="h-4 w-4 text-gray-400 mr-2" />
+                <span className="text-sm text-gray-600">Nom:</span>
+                <span className="ml-2 font-medium">{user.name}</span>
+              </div>
+              <div className="flex items-center">
+                <Mail className="h-4 w-4 text-gray-400 mr-2" />
+                <span className="text-sm text-gray-600">Email:</span>
+                <span className="ml-2 font-medium">{user.email}</span>
+              </div>
+              <div className="flex items-center">
+                <Calendar className="h-4 w-4 text-gray-400 mr-2" />
+                <span className="text-sm text-gray-600">Membre depuis:</span>
+                <span className="ml-2 font-medium">
+                  {new Date(user.createdAt).toLocaleDateString('fr-FR')}
+                </span>
+              </div>
+            </Card.Body>
+          </Card>
+
+          {/* Carte Statistiques */}
+          <Card className="text-center">
+            <Card.Body>
+              <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mx-auto mb-4">
+                <Award className="h-6 w-6 text-green-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Niveau</h3>
+              <p className="text-2xl font-bold text-green-600">
+                {user.points >= 1000 ? 'Expert' : user.points >= 500 ? 'Avancé' : 'Débutant'}
+              </p>
+              <p className="text-sm text-gray-500 mt-1">
+                {user.points >= 1000 ? 'Félicitations!' : `${1000 - user.points} points pour Expert`}
+              </p>
+            </Card.Body>
+          </Card>
+        </div>
+
+        {/* Actions rapides */}
+        <Card>
+          <Card.Header>
+            <h3 className="text-lg font-semibold text-gray-900">
+              Actions rapides
+            </h3>
+          </Card.Header>
+          <Card.Body>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => router.push('/profile')}
+              >
+                Modifier le profil
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => router.push('/activities')}
+              >
+                Mes activités
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => router.push('/leaderboard')}
+              >
+                Classement
+              </Button>
+              <Button
+                variant="danger"
+                className="w-full"
+                onClick={handleLogout}
+              >
+                Se déconnecter
+              </Button>
+            </div>
+          </Card.Body>
+        </Card>
+      </div>
+    </Layout>
   );
 }
