@@ -1,0 +1,76 @@
+name: CI + CD - Build & Deploy
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-deploy:
+    name: 🔍 CI + 🚀 CD
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:6
+        ports:
+          - 27017:27017
+        options: --health-cmd "mongosh --eval 'db.stats()'" --health-interval 10s --health-timeout 5s --health-retries 5
+
+    strategy:
+      matrix:
+        node-version: [18]
+
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🟢 Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: 📁 Install backend deps
+        working-directory: ./backend
+        run: npm ci
+
+      - name: 📁 Install frontend deps
+        working-directory: ./frontend
+        run: npm ci
+
+      # 👉 Tu peux activer ça plus tard si tu ajoutes les scripts
+      # - name: 🧹 Lint backend
+      #   working-directory: ./backend
+      #   run: npm run lint
+
+      # - name: 🧹 Lint frontend
+      #   working-directory: ./frontend
+      #   run: npm run lint
+
+      # - name: 🧪 Run backend tests
+      #   working-directory: ./backend
+      #   run: npm run test || echo "⚠️ No tests defined"
+
+      - name: 🏗 Build frontend
+        working-directory: ./frontend
+        run: npm run build
+
+      - name: 🏗 Build backend
+        working-directory: ./backend
+        run: npm run build
+
+      - name: 🚀 Deploy to VPS (only on main)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+            cd /home/martin/SportEra
+            git pull origin main
+            docker compose -f docker-compose.prod.yml down
+            docker compose -f docker-compose.prod.yml up --build -d
+          EOF
