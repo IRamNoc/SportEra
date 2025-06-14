@@ -37,8 +37,7 @@ class ApiService {
   private token: string | null = null;
 
   constructor() {
-    this.baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-    
+    this.baseUrl = `${process.env.NEXT_PUBLIC_API_URL}${process.env.NEXT_PUBLIC_API_PREFIX || ''}`;
     // Récupérer le token depuis le localStorage si disponible
     if (typeof window !== 'undefined') {
       this.token = localStorage.getItem('token');
@@ -112,7 +111,7 @@ class ApiService {
 
   // Méthodes d'authentification
   async login(credentials: LoginRequest): Promise<ApiResponse<AuthResponse> & AuthResponse> {
-    const response = await this.request<AuthResponse>('/api/auth/login', {
+    const response = await this.request<AuthResponse>('/auth/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
     });
@@ -130,7 +129,7 @@ class ApiService {
   }
 
   async register(userData: RegisterRequest): Promise<ApiResponse<AuthResponse>> {
-    const response = await this.request<AuthResponse>('/api/auth/register', {
+    const response = await this.request<AuthResponse>('/auth/register', {
       method: 'POST',
       body: JSON.stringify(userData),
     });
@@ -164,20 +163,20 @@ class ApiService {
 
   // Méthodes de santé
   async ping(): Promise<ApiResponse> {
-    return this.request('/api/ping');
+    return this.request('/ping');
   }
 
   async healthCheck(): Promise<ApiResponse> {
-    return this.request('/api/health');
+    return this.request('/health');
   }
 
   // Méthodes utilisateur (à implémenter selon les besoins)
   async getCurrentUser(): Promise<ApiResponse<User>> {
-    return this.request<User>('/api/auth/me');
+    return this.request<User>('/auth/me');
   }
 
   async updateProfile(userData: Partial<User>): Promise<ApiResponse<User>> {
-    return this.request<User>('/api/auth/profile', {
+    return this.request<User>('/auth/profile', {
       method: 'PUT',
       body: JSON.stringify(userData),
     });

@@ -54,7 +54,6 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.prod
     container_name: sportera-frontend-prod
-    env_file: ./frontend/.env.prod
     restart: always
     environment:
       - NODE_ENV=production

@@ -42,12 +42,16 @@ class Application {
   }
 
   private initializeRoutes(): void {
+    // Préfixe API avec version
+    const apiVersion = process.env.API_VERSION || 'v1';
+    const apiPrefix = `/api/${apiVersion}`;
+    
     // Routes de santé (ping, health check)
-    this.app.use('/api/ping', createHealthRoutes());
-    this.app.use('/api/health', createHealthRoutes());
+    this.app.use(`${apiPrefix}/ping`, createHealthRoutes());
+    this.app.use(`${apiPrefix}/health`, createHealthRoutes());
     
     // Routes d'authentification
-    this.app.use('/api/auth', createAuthRoutes());
+    this.app.use(`${apiPrefix}/auth`, createAuthRoutes());
     
     // Route par défaut
     this.app.get('/', (req, res) => {
@@ -81,10 +85,13 @@ class Application {
       
       // Démarrage du serveur
       this.app.listen(this.port, () => {
-        console.log(`🚀 Serveur démarré sur le port ${this.port}`);
-        console.log(`📍 URL: http://localhost:${this.port}`);
-        console.log(`🏥 Health check: http://localhost:${this.port}/api/health`);
-        console.log(`🔐 Auth API: http://localhost:${this.port}/api/auth`);
+        const apiVersion = process.env.API_VERSION || 'v1';
+      const apiPrefix = `/api/${apiVersion}`;
+      
+      console.log(`🚀 Serveur démarré sur le port ${this.port}`);
+      console.log(`📡 API disponible sur: http://localhost:${this.port}`);
+      console.log(`🏥 Health check: http://localhost:${this.port}${apiPrefix}/health`);
+      console.log(`🔐 Auth API: http://localhost:${this.port}${apiPrefix}/auth`);
       });
     } catch (error) {
       console.error('❌ Erreur lors du démarrage:', error);
