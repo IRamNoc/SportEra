@@ -54,7 +54,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
               className="flex items-center space-x-2 text-xl font-bold text-blue-600 hover:text-blue-800 transition-colors"
             >
               <Trophy className="h-8 w-8" />
-              <span>SportEra</span>
+              <span>Sport'Era</span>
             </button>
           </div>
 

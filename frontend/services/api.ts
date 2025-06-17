@@ -12,6 +12,9 @@ interface User {
   name: string;
   email: string;
   points: number;
+  userType: 'user' | 'provider';
+  companyName?: string;
+  description?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -30,6 +33,9 @@ interface RegisterRequest {
   name: string;
   email: string;
   password: string;
+  userType?: 'user' | 'provider';
+  companyName?: string;
+  description?: string;
 }
 
 class ApiService {

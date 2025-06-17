@@ -12,7 +12,7 @@ export default function Signup() {
 
   return (
     <div style={{ padding: '50px', maxWidth: '400px', margin: '0 auto' }}>
-      <h1>Inscription - SportEra</h1>
+      <h1>Inscription - Sport'Era</h1>
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '15px' }}>
           <label>Nom:</label>

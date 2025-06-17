@@ -111,7 +111,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
           Connexion
         </h2>
         <p className="text-center text-gray-600 mt-2">
-          Connectez-vous à votre compte SportEra
+          Connectez-vous à votre compte Sport'Era
         </p>
       </Card.Header>
       

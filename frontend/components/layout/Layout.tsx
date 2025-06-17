@@ -4,30 +4,36 @@
 'use client';
 
 import React, { ReactNode } from 'react';
-import Navbar from './Navbar';
+import Header from './Header';
+import Footer from './Footer';
 
 interface LayoutProps {
   children: ReactNode;
-  showNavbar?: boolean;
+  showHeader?: boolean;
+  showFooter?: boolean;
   className?: string;
   containerClassName?: string;
 }
 
 const Layout: React.FC<LayoutProps> = ({
   children,
-  showNavbar = true,
+  showHeader = true,
+  showFooter = true,
   className = '',
   containerClassName = ''
 }) => {
   return (
-    <div className={`min-h-screen bg-gray-50 ${className}`}>
-      {/* Barre de navigation */}
-      {showNavbar && <Navbar />}
+    <div className={`min-h-screen bg-white ${className}`}>
+      {/* Header */}
+      {showHeader && <Header />}
       
       {/* Contenu principal */}
-      <main className={`${showNavbar ? 'pt-0' : ''} ${containerClassName}`}>
+      <main className={`${containerClassName}`}>
         {children}
       </main>
+      
+      {/* Footer */}
+      {showFooter && <Footer />}
     </div>
   );
 };

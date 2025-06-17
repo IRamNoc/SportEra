@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, User, Eye, EyeOff, Building2, UserCheck } from 'lucide-react';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import Card from '../ui/Card';
@@ -17,8 +17,13 @@ interface RegisterFormProps {
   redirectTo?: string;
 }
 
+type UserType = 'user' | 'provider';
+
 interface RegisterFormData extends RegisterRequest {
   confirmPassword: string;
+  userType: UserType;
+  companyName?: string;
+  description?: string;
 }
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ 
@@ -32,7 +37,10 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    userType: 'user',
+    companyName: '',
+    description: ''
   });
   
   const [showPassword, setShowPassword] = useState(false);
@@ -44,7 +52,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
     const errors: Partial<RegisterFormData> = {};
     
     if (!formData.name) {
-      errors.name = 'Le nom est requis';
+      errors.name = formData.userType === 'provider' ? 'Le nom du contact est requis' : 'Le nom est requis';
     } else if (formData.name.length < 2) {
       errors.name = 'Le nom doit contenir au moins 2 caractères';
     }
@@ -67,13 +75,28 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
       errors.confirmPassword = 'Les mots de passe ne correspondent pas';
     }
     
+    // Validation spécifique aux partenaires
+    if (formData.userType === 'provider') {
+      if (!formData.companyName) {
+        errors.companyName = 'Le nom de l\'entreprise est requis';
+      } else if (formData.companyName.length < 2) {
+        errors.companyName = 'Le nom de l\'entreprise doit contenir au moins 2 caractères';
+      }
+      
+      if (!formData.description) {
+        errors.description = 'La description de l\'activité est requise';
+      } else if (formData.description.length < 10) {
+        errors.description = 'La description doit contenir au moins 10 caractères';
+      }
+    }
+    
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
   // Gestion des changements de champs
   const handleInputChange = (field: keyof RegisterFormData) => (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const value = e.target.value;
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -138,7 +161,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           Inscription
         </h2>
         <p className="text-center text-gray-600 mt-2">
-          Créez votre compte SportEra
+          Créez votre compte Sport'Era
         </p>
       </Card.Header>
       
@@ -151,11 +174,47 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
             </div>
           )}
           
+          {/* Sélection du type d'utilisateur */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Type de compte
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, userType: 'user', companyName: '', description: '' }))}
+                className={`p-3 rounded-lg border-2 transition-all duration-200 flex flex-col items-center space-y-2 ${
+                  formData.userType === 'user'
+                    ? 'border-blue-500 bg-blue-50 text-blue-700'
+                    : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                }`}
+              >
+                <UserCheck className="w-5 h-5" />
+                <span className="text-sm font-medium">Utilisateur</span>
+                <span className="text-xs text-center">Je cherche des services sportifs</span>
+              </button>
+              
+              <button
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, userType: 'provider' }))}
+                className={`p-3 rounded-lg border-2 transition-all duration-200 flex flex-col items-center space-y-2 ${
+                  formData.userType === 'provider'
+                    ? 'border-blue-500 bg-blue-50 text-blue-700'
+                    : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                }`}
+              >
+                <Building2 className="w-5 h-5" />
+                <span className="text-sm font-medium">Partenaire</span>
+                <span className="text-xs text-center">Je propose des services sportifs</span>
+              </button>
+            </div>
+          </div>
+          
           {/* Champ Nom */}
           <Input
             type="text"
-            label="Nom complet"
-            placeholder="Votre nom complet"
+            label={formData.userType === 'provider' ? 'Nom du contact' : 'Nom complet'}
+            placeholder={formData.userType === 'provider' ? 'Nom du responsable' : 'Votre nom complet'}
             value={formData.name}
             onChange={handleInputChange('name')}
             error={formErrors.name}
@@ -163,6 +222,47 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
             iconPosition="left"
             required
           />
+          
+          {/* Champs spécifiques aux partenaires */}
+          {formData.userType === 'provider' && (
+            <>
+              <Input
+                type="text"
+                label="Nom de l'entreprise"
+                placeholder="Nom de votre entreprise ou structure"
+                value={formData.companyName}
+                onChange={handleInputChange('companyName')}
+                error={formErrors.companyName}
+                icon={Building2}
+                iconPosition="left"
+                required
+              />
+              
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Description de l'activité *
+                </label>
+                <textarea
+                  placeholder="Décrivez vos services sportifs (coaching, location, événements, etc.)"
+                  value={formData.description}
+                  onChange={(e) => {
+                    setFormData(prev => ({ ...prev, description: e.target.value }));
+                    if (formErrors.description) {
+                      setFormErrors(prev => ({ ...prev, description: undefined }));
+                    }
+                  }}
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none ${
+                    formErrors.description ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                  rows={3}
+                  required
+                />
+                {formErrors.description && (
+                  <p className="text-sm text-red-600">{formErrors.description}</p>
+                )}
+              </div>
+            </>
+          )}
           
           {/* Champ Email */}
           <Input
@@ -215,7 +315,12 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
             loading={isLoading}
             disabled={isLoading}
           >
-            {isLoading ? 'Création du compte...' : 'Créer mon compte'}
+            {isLoading 
+              ? 'Création du compte...' 
+              : formData.userType === 'provider' 
+                ? 'Créer mon compte partenaire' 
+                : 'Créer mon compte'
+            }
           </Button>
         </form>
       </Card.Body>

@@ -49,8 +49,30 @@ export default function Dashboard() {
             Bienvenue, {user.name}! 👋
           </h1>
           <p className="text-gray-600">
-            Voici un aperçu de votre compte SportEra
+            {user.userType === 'provider' 
+              ? 'Gérez vos services sportifs et suivez votre activité'
+              : 'Voici un aperçu de votre compte SportEra'
+            }
           </p>
+          {user.userType === 'provider' && (
+            <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <span className="text-blue-600 font-semibold text-sm">P</span>
+                  </div>
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-blue-800">
+                    Compte Partenaire - {user.companyName}
+                  </h3>
+                  <p className="text-sm text-blue-600">
+                    {user.description}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Grille de cartes */}
@@ -117,40 +139,84 @@ export default function Dashboard() {
         <Card>
           <Card.Header>
             <h3 className="text-lg font-semibold text-gray-900">
-              Actions rapides
+              {user.userType === 'provider' ? 'Gestion partenaire' : 'Actions rapides'}
             </h3>
           </Card.Header>
           <Card.Body>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => router.push('/profile')}
-              >
-                Modifier le profil
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => router.push('/activities')}
-              >
-                Mes activités
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => router.push('/leaderboard')}
-              >
-                Classement
-              </Button>
-              <Button
-                variant="danger"
-                className="w-full"
-                onClick={handleLogout}
-              >
-                Se déconnecter
-              </Button>
-            </div>
+            {user.userType === 'provider' ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <Button
+                  variant="primary"
+                  className="w-full"
+                  onClick={() => router.push('/services/create')}
+                >
+                  Créer un service
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => router.push('/services/manage')}
+                >
+                  Gérer mes services
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => router.push('/bookings')}
+                >
+                  Réservations
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => router.push('/profile')}
+                >
+                  Profil partenaire
+                </Button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <Button
+                  variant="primary"
+                  className="w-full"
+                  onClick={() => router.push('/services/search')}
+                >
+                  Rechercher services
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => router.push('/profile')}
+                >
+                  Modifier le profil
+                </Button>
+                <Button
+                   variant="outline"
+                   className="w-full"
+                   onClick={() => router.push('/activities')}
+                 >
+                   Mes activités
+                 </Button>
+                 <Button
+                   variant="outline"
+                   className="w-full"
+                   onClick={() => router.push('/leaderboard')}
+                 >
+                   Classement
+                 </Button>
+               </div>
+             )}
+             
+             {/* Bouton de déconnexion pour tous les types d'utilisateurs */}
+             <div className="mt-6 pt-6 border-t border-gray-200">
+               <Button
+                 variant="danger"
+                 className="w-full"
+                 onClick={handleLogout}
+               >
+                 Se déconnecter
+               </Button>
+             </div>
           </Card.Body>
         </Card>
       </div>
