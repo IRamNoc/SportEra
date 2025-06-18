@@ -1,6 +1,8 @@
 // Domain Entity - User
 // Représente l'entité métier User sans dépendances externes
 
+import { randomUUID } from 'crypto';
+
 export type UserType = 'user' | 'provider';
 
 export interface UserProps {
@@ -34,7 +36,7 @@ export class User {
   static create(props: Omit<UserProps, 'id' | 'createdAt' | 'updatedAt'>): User {
     const now = new Date();
     return new User(
-      crypto.randomUUID(),
+      randomUUID(),
       props.name,
       props.email,
       props.password,
