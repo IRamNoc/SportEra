@@ -5,12 +5,16 @@ const nextConfig = {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   },
   async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: 'http://backend:3000/api/:path*',
-      },
-    ];
+    // Only apply rewrites in development
+    if (process.env.NODE_ENV === 'development') {
+      return [
+        {
+          source: '/api/:path*',
+          destination: 'http://backend:3000/api/:path*',
+        },
+      ];
+    }
+    return [];
   },
 };
 
