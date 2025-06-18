@@ -10,6 +10,9 @@ interface CardProps {
   shadow?: 'none' | 'sm' | 'md' | 'lg';
   rounded?: 'none' | 'sm' | 'md' | 'lg';
   border?: boolean;
+  onClick?: () => void;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
 interface CardHeaderProps {
@@ -37,7 +40,10 @@ const Card: React.FC<CardProps> & {
   padding = 'md',
   shadow = 'md',
   rounded = 'lg',
-  border = true
+  border = true,
+  onClick,
+  onMouseEnter,
+  onMouseLeave
 }) => {
   const baseClasses = 'bg-white';
   
@@ -74,7 +80,12 @@ const Card: React.FC<CardProps> & {
   ].filter(Boolean).join(' ');
   
   return (
-    <div className={classes}>
+    <div 
+      className={classes}
+      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
       {children}
     </div>
   );
