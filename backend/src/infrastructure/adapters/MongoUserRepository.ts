@@ -2,7 +2,7 @@
 // Adapte l'interface du domaine à MongoDB
 
 import mongoose, { Schema, Document } from 'mongoose';
-import { User, UserProps } from '../../domain/entities/User';
+import { User, UserProps, UserType } from '../../domain/entities/User';
 import { UserRepository } from '../../domain/ports/UserRepository';
 
 // Interface pour le document MongoDB
@@ -11,6 +11,9 @@ interface UserDocument extends Document {
   email: string;
   password: string;
   points: number;
+  userType: UserType;
+  companyName?: string;
+  description?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -40,6 +43,25 @@ const UserSchema: Schema = new Schema({
     type: Number,
     default: 0,
     min: [0, 'Les points ne peuvent pas être négatifs']
+  },
+  userType: {
+    type: String,
+    enum: ['user', 'provider'],
+    required: [true, 'Le type d\'utilisateur est requis'],
+    default: 'user'
+  },
+  companyName: {
+    type: String,
+    trim: true,
+    maxlength: [100, 'Le nom de l\'entreprise ne peut pas dépasser 100 caractères'],
+    required: function(this: UserDocument) {
+      return this.userType === 'provider';
+    }
+  },
+  description: {
+    type: String,
+    trim: true,
+    maxlength: [500, 'La description ne peut pas dépasser 500 caractères']
   }
 }, {
   timestamps: true
@@ -53,7 +75,10 @@ export class MongoUserRepository implements UserRepository {
       name: user.name,
       email: user.email,
       password: user.password,
-      points: user.points
+      points: user.points,
+      userType: user.userType,
+      companyName: user.companyName,
+      description: user.description
     });
 
     const savedDoc = await userDoc.save();
@@ -83,6 +108,9 @@ export class MongoUserRepository implements UserRepository {
         email: user.email,
         password: user.password,
         points: user.points,
+        userType: user.userType,
+        companyName: user.companyName,
+        description: user.description,
         updatedAt: new Date()
       },
       { new: true }
@@ -114,6 +142,9 @@ export class MongoUserRepository implements UserRepository {
       email: doc.email,
       password: doc.password,
       points: doc.points,
+      userType: doc.userType,
+      companyName: doc.companyName,
+      description: doc.description,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt
     });

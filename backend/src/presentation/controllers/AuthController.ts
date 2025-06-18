@@ -13,7 +13,7 @@ export class AuthController {
 
   async register(req: Request, res: Response): Promise<void> {
     try {
-      const { name, email, password } = req.body;
+      const { name, email, password, userType, companyName, description } = req.body;
 
       // Validation basique des champs requis
       if (!name || !email || !password) {
@@ -24,11 +24,23 @@ export class AuthController {
         return;
       }
 
+      // Validation spécifique pour les partenaires
+      if (userType === 'provider' && !companyName) {
+        res.status(400).json({
+          success: false,
+          message: 'Le nom de l\'entreprise est requis pour les partenaires'
+        });
+        return;
+      }
+
       // Exécuter le cas d'usage
       const result = await this.registerUserUseCase.execute({
         name,
         email,
-        password
+        password,
+        userType,
+        companyName,
+        description
       });
 
       // Retourner la réponse appropriée

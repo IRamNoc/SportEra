@@ -79,7 +79,8 @@ export class LoginUserUseCase {
       console.log('🎫 Génération du token JWT...');
       const tokenPayload = {
         userId: user.id,
-        email: user.email
+        email: user.email,
+        userType: user.userType
       };
       console.log('🎫 Payload du token:', tokenPayload);
       
@@ -91,7 +92,8 @@ export class LoginUserUseCase {
       console.log('👤 Données utilisateur pour réponse:', JSON.stringify({
         id: userJson.id,
         email: userJson.email,
-        name: userJson.name
+        name: userJson.name,
+        userType: userJson.userType
       }, null, 2));
 
       const response = {

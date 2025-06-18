@@ -1,11 +1,16 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+export type UserType = 'user' | 'provider';
+
 export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
   points: number;
+  userType: UserType;
+  companyName?: string;
+  description?: string;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -34,6 +39,25 @@ const UserSchema: Schema = new Schema({
   points: {
     type: Number,
     default: 0
+  },
+  userType: {
+    type: String,
+    enum: ['user', 'provider'],
+    required: [true, 'Le type d\'utilisateur est requis'],
+    default: 'user'
+  },
+  companyName: {
+    type: String,
+    trim: true,
+    maxlength: [100, 'Le nom de l\'entreprise ne peut pas dépasser 100 caractères'],
+    required: function(this: IUser) {
+      return this.userType === 'provider';
+    }
+  },
+  description: {
+    type: String,
+    trim: true,
+    maxlength: [500, 'La description ne peut pas dépasser 500 caractères']
   }
 }, {
   timestamps: true

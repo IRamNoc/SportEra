@@ -5,10 +5,15 @@ import { User } from '../../domain/entities/User';
 import { UserRepository } from '../../domain/ports/UserRepository';
 import { CryptoService } from '../../domain/ports/CryptoService';
 
+import { UserType } from '../../domain/entities/User';
+
 export interface RegisterUserRequest {
   name: string;
   email: string;
   password: string;
+  userType?: UserType;
+  companyName?: string;
+  description?: string;
 }
 
 export interface RegisterUserResponse {
@@ -50,7 +55,10 @@ export class RegisterUserUseCase {
         name: request.name.trim(),
         email: request.email.toLowerCase().trim(),
         password: hashedPassword,
-        points: 0
+        points: 0,
+        userType: request.userType || 'user',
+        companyName: request.companyName?.trim(),
+        description: request.description?.trim()
       });
 
       // Sauvegarder l'utilisateur
@@ -71,10 +79,20 @@ export class RegisterUserUseCase {
   }
 
   private validateInput(request: RegisterUserRequest): boolean {
-    return (
+    const baseValidation = (
       User.isValidName(request.name) &&
       User.isValidEmail(request.email) &&
       User.isValidPassword(request.password)
     );
+
+    // Validation spécifique pour les partenaires
+    if (request.userType === 'provider') {
+      return baseValidation && 
+             request.companyName && 
+             request.companyName.trim().length > 0 &&
+             request.companyName.length <= 100;
+    }
+
+    return baseValidation;
   }
 }

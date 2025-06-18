@@ -1,12 +1,17 @@
 // Domain Entity - User
 // Représente l'entité métier User sans dépendances externes
 
+export type UserType = 'user' | 'provider';
+
 export interface UserProps {
   id?: string;
   name: string;
   email: string;
   password: string;
   points: number;
+  userType: UserType;
+  companyName?: string;
+  description?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -18,6 +23,9 @@ export class User {
     private readonly _email: string,
     private readonly _password: string,
     private _points: number,
+    private readonly _userType: UserType,
+    private readonly _companyName?: string,
+    private readonly _description?: string,
     private readonly _createdAt: Date,
     private _updatedAt: Date
   ) {}
@@ -33,6 +41,9 @@ export class User {
       props.email,
       props.password,
       props.points || 0,
+      props.userType,
+      props.companyName,
+      props.description,
       now,
       now
     );
@@ -46,6 +57,9 @@ export class User {
       props.email,
       props.password,
       props.points,
+      props.userType,
+      props.companyName,
+      props.description,
       props.createdAt,
       props.updatedAt
     );
@@ -78,6 +92,18 @@ export class User {
 
   get updatedAt(): Date {
     return this._updatedAt;
+  }
+
+  get userType(): UserType {
+    return this._userType;
+  }
+
+  get companyName(): string | undefined {
+    return this._companyName;
+  }
+
+  get description(): string | undefined {
+    return this._description;
   }
 
   // Business methods
@@ -121,6 +147,9 @@ export class User {
       name: this._name,
       email: this._email,
       points: this._points,
+      userType: this._userType,
+      companyName: this._companyName,
+      description: this._description,
       createdAt: this._createdAt,
       updatedAt: this._updatedAt
     };

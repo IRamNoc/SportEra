@@ -18,6 +18,22 @@ export default function Dashboard() {
     }
   }, [isAuthenticated, isLoading, router]);
 
+  // Redirection automatique basée sur le type d'utilisateur
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && user) {
+      // Rediriger les partenaires vers leur dashboard spécialisé
+      if (user.userType === 'provider' && router.pathname === '/dashboard') {
+        router.push('/dashboard/partner');
+        return;
+      }
+      // Rediriger les joueurs vers leur dashboard spécialisé
+      if (user.userType === 'user' && router.pathname === '/dashboard') {
+        router.push('/dashboard/player');
+        return;
+      }
+    }
+  }, [isAuthenticated, isLoading, user, router]);
+
   const handleLogout = () => {
     logout();
     router.push('/');
@@ -46,7 +62,7 @@ export default function Dashboard() {
         {/* En-tête de bienvenue */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Bienvenue, {user.name}! 👋
+            Bienvenue, {user.name}! 
           </h1>
           <p className="text-gray-600">
             {user.userType === 'provider' 
