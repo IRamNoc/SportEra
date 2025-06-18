@@ -88,7 +88,7 @@ export class RegisterUserUseCase {
     // Validation spécifique pour les partenaires
     if (request.userType === 'provider') {
       return baseValidation && 
-             request.companyName && 
+             !!request.companyName && 
              request.companyName.trim().length > 0 &&
              request.companyName.length <= 100;
     }

@@ -143,8 +143,8 @@ export class MongoUserRepository implements UserRepository {
       password: doc.password,
       points: doc.points,
       userType: doc.userType,
-      companyName: doc.companyName,
-      description: doc.description,
+      companyName: doc.companyName || '',
+      description: doc.description || '',
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt
     });

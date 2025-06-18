@@ -24,28 +24,26 @@ export class User {
     private readonly _password: string,
     private _points: number,
     private readonly _userType: UserType,
-    private readonly _companyName?: string,
-    private readonly _description?: string,
     private readonly _createdAt: Date,
-    private _updatedAt: Date
+    private _updatedAt: Date,
+    private readonly _companyName?: string,
+    private readonly _description?: string
   ) {}
 
   // Factory method pour créer un nouvel utilisateur
   static create(props: Omit<UserProps, 'id' | 'createdAt' | 'updatedAt'>): User {
     const now = new Date();
-    const id = this.generateId();
-    
     return new User(
-      id,
+      crypto.randomUUID(),
       props.name,
       props.email,
       props.password,
-      props.points || 0,
+      props.points,
       props.userType,
-      props.companyName,
-      props.description,
       now,
-      now
+      now,
+      props.companyName,
+      props.description
     );
   }
 
@@ -58,10 +56,10 @@ export class User {
       props.password,
       props.points,
       props.userType,
-      props.companyName,
-      props.description,
       props.createdAt,
-      props.updatedAt
+      props.updatedAt,
+      props.companyName,
+      props.description
     );
   }
 
