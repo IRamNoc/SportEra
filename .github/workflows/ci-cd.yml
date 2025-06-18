@@ -72,5 +72,7 @@ jobs:
             cd /home/martin/SportEra
             git pull origin main
             docker compose -f docker-compose.prod.yml down
-            docker compose -f docker-compose.prod.yml up --build -d
+            docker system prune -f
+            docker compose -f docker-compose.prod.yml build --no-cache
+            docker compose -f docker-compose.prod.yml up -d
           EOF
