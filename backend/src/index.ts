@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import connectDB from './infrastructure/config/database';
 import { createAuthRoutes } from './presentation/routes/authRoutes';
 import { createHealthRoutes } from './presentation/routes/healthRoutes';
+import { createPlacesRoutes } from './presentation/routes/placesRoutes';
 import { errorHandler } from './presentation/middleware/errorHandler';
 import { requestLogger } from './presentation/middleware/requestLogger';
 
@@ -53,6 +54,9 @@ class Application {
     // Routes d'authentification
     this.app.use(`${apiPrefix}/auth`, createAuthRoutes());
     
+    // Routes des lieux
+    this.app.use(`${apiPrefix}/places`, createPlacesRoutes());
+    
     // Route par défaut
     this.app.get('/', (req, res) => {
       res.json({
@@ -92,6 +96,7 @@ class Application {
       console.log(`📡 API disponible sur: http://localhost:${this.port}`);
       console.log(`🏥 Health check: http://localhost:${this.port}${apiPrefix}/health`);
       console.log(`🔐 Auth API: http://localhost:${this.port}${apiPrefix}/auth`);
+      console.log(`📍 Places API: http://localhost:${this.port}${apiPrefix}/places`);
       });
     } catch (error) {
       console.error('❌ Erreur lors du démarrage:', error);

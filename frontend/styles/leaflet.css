@@ -1,0 +1,73 @@
+/* Leaflet CSS */
+@import 'leaflet/dist/leaflet.css';
+
+/* Corrections pour les marqueurs personnalisés */
+.user-location-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.place-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Styles pour les popups */
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.leaflet-popup-content {
+  margin: 0;
+  padding: 0;
+}
+
+.leaflet-popup-tip {
+  background: white;
+}
+
+/* Responsive pour mobile */
+@media (max-width: 768px) {
+  .leaflet-control-container {
+    font-size: 14px;
+  }
+  
+  .leaflet-popup-content-wrapper {
+    max-width: 250px;
+  }
+}
+
+/* Animation pour le chargement */
+.leaflet-container {
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Styles pour les contrôles de zoom */
+.leaflet-control-zoom {
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.leaflet-control-zoom a {
+  border-radius: 0;
+  border: none;
+  background-color: white;
+  color: #374151;
+  font-weight: bold;
+}
+
+.leaflet-control-zoom a:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+.leaflet-control-zoom a:first-child {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
+.leaflet-control-zoom a:last-child {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}

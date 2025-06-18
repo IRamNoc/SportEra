@@ -1,6 +1,20 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Trophy, User as UserIcon, Mail, Calendar, Award, Search, MapPin, Clock, Star } from 'lucide-react';
+import dynamic from 'next/dynamic';
+
+// Import dynamique pour éviter les erreurs SSR avec Leaflet
+const InteractiveMap = dynamic(() => import('../../components/map/InteractiveMap'), {
+  ssr: false,
+  loading: () => (
+    <div className="bg-gray-100 rounded-lg flex items-center justify-center" style={{ height: '400px' }}>
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+        <p className="text-gray-600">Chargement de la carte...</p>
+      </div>
+    </div>
+  )
+});
 import Layout from '../../components/layout/Layout';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -112,6 +126,22 @@ export default function PlayerDashboard() {
             </Card.Body>
           </Card>
         </div>
+
+        {/* Carte interactive */}
+        <Card className="mb-8">
+          <Card.Header>
+            <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+              <MapPin className="h-5 w-5 mr-2 text-blue-600" />
+              Infrastructures à proximité
+            </h2>
+            <p className="text-sm text-gray-600 mt-1">
+              Découvrez les installations sportives autour de vous
+            </p>
+          </Card.Header>
+          <Card.Body>
+            <InteractiveMap className="w-full" />
+          </Card.Body>
+        </Card>
 
         {/* Actions rapides pour joueurs */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
