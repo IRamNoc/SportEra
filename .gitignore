@@ -88,7 +88,8 @@ dist
 
 # Gatsby files
 .cache/
-public
+# Note: Gatsby's public directory is ignored, but Next.js public directory should be tracked
+# public
 
 # Vuepress build output
 .vuepress/dist

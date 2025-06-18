@@ -1,0 +1,29 @@
+{
+  "name": "Sport'Era",
+  "short_name": "Sport'Era",
+  "description": "Plateforme de gestion sportive professionnelle",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "/icons/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["sports", "productivity", "business"],
+  "screenshots": [],
+  "prefer_related_applications": false
+}

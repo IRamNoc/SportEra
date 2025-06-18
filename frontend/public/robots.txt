@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://sportera.com/sitemap.xml
+
+# Disallow sensitive areas
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /dashboard/private/
+
+# Allow specific public API endpoints if needed
+Allow: /api/public/
+
+# Crawl delay (optional)
+Crawl-delay: 1
