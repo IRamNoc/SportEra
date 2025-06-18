@@ -19,7 +19,7 @@ export class PlaceRepository implements IPlaceRepository {
         description: 'Stade municipal avec piste d\'athlétisme et terrain de football',
         location: {
           type: 'Point' as const,
-          coordinates: [2.2530, 48.8415]
+          coordinates: [2.2530, 48.8415] as [number, number]
         },
         sports: ['football', 'running', 'athlétisme'],
         amenities: ['vestiaires', 'parking', 'éclairage'],
@@ -33,7 +33,7 @@ export class PlaceRepository implements IPlaceRepository {
         description: 'Piscine historique avec bassin olympique et bassin d\'hiver',
         location: {
           type: 'Point' as const,
-          coordinates: [2.2516, 48.8476]
+          coordinates: [2.2516, 48.8476] as [number, number]
         },
         sports: ['natation', 'aquafitness'],
         amenities: ['vestiaires', 'sauna', 'parking'],
@@ -48,7 +48,7 @@ export class PlaceRepository implements IPlaceRepository {
         description: 'Club de tennis avec courts couverts et extérieurs',
         location: {
           type: 'Point' as const,
-          coordinates: [2.2441, 48.8566]
+          coordinates: [2.2441, 48.8566] as [number, number]
         },
         sports: ['tennis'],
         amenities: ['vestiaires', 'pro-shop', 'restaurant'],
@@ -62,7 +62,7 @@ export class PlaceRepository implements IPlaceRepository {
         description: 'Gymnase municipal polyvalent',
         location: {
           type: 'Point' as const,
-          coordinates: [2.2689, 48.8814]
+          coordinates: [2.2689, 48.8814] as [number, number]
         },
         sports: ['basketball', 'volleyball', 'handball', 'badminton'],
         amenities: ['vestiaires', 'parking']
@@ -73,7 +73,7 @@ export class PlaceRepository implements IPlaceRepository {
         description: 'Salle de fitness moderne avec équipements dernière génération',
         location: {
           type: 'Point' as const,
-          coordinates: [2.2875, 48.8947]
+          coordinates: [2.2875, 48.8947] as [number, number]
         },
         sports: ['fitness', 'musculation', 'crossfit'],
         amenities: ['vestiaires', 'parking', 'sauna'],
@@ -88,7 +88,7 @@ export class PlaceRepository implements IPlaceRepository {
         description: 'Dojo traditionnel pour arts martiaux',
         location: {
           type: 'Point' as const,
-          coordinates: [2.4364, 48.8466]
+          coordinates: [2.4364, 48.8466] as [number, number]
         },
         sports: ['judo', 'karaté', 'aikido', 'arts-martiaux'],
         amenities: ['vestiaires', 'tatamis']
@@ -99,7 +99,7 @@ export class PlaceRepository implements IPlaceRepository {
         description: 'Centre aquatique avec piscine olympique et bassin ludique',
         location: {
           type: 'Point' as const,
-          coordinates: [2.4039, 48.8714]
+          coordinates: [2.4039, 48.8714] as [number, number]
         },
         sports: ['natation', 'aquafitness', 'plongée'],
         amenities: ['vestiaires', 'parking', 'cafétéria']
@@ -110,7 +110,7 @@ export class PlaceRepository implements IPlaceRepository {
         description: 'Stade d\'athlétisme avec piste et aires de saut',
         location: {
           type: 'Point' as const,
-          coordinates: [2.3461, 48.8186]
+          coordinates: [2.3461, 48.8186] as [number, number]
         },
         sports: ['athlétisme', 'running', 'football'],
         amenities: ['vestiaires', 'parking', 'tribune']
